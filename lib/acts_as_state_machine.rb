@@ -164,7 +164,18 @@ module ScottBarron                   #:nodoc:
         end
 
         def run_transition_action(action)
-          Symbol === action ? self.method(action).call : action.call(self)
+          # original line
+          #Symbol === action ? self.method(action).call : action.call(self)
+
+          # http://www.ruby-forum.com/topic/163798
+          if Symbol === action
+            self.method(action).untaint.call
+          else
+            action.call(self)
+          end
+
+          # http://www.ruby-forum.com/topic/144232
+          #Symbol === action ? self.send(action) : action.call(self)
         end
         private :run_transition_action
       end
